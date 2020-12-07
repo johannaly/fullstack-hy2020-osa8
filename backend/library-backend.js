@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server')
+const { isNullableType } = require('graphql')
 const { v1: uuid } = require('uuid')
 
 let authors = [
@@ -114,6 +115,10 @@ const typeDefs = gql`
       published: Int
       genres: [String] 
     ): Book
+    editAuthor(
+      name: String!
+      setBornTo: Int
+    ): Author
   }
 `
 const bookMatches = (args, book) => {
@@ -126,7 +131,7 @@ const resolvers = {
     bookCount: () => books.length,
     authorCount: () => authors.length,
     allAuthors: () => authors,
-    allBooks: (root, args) => 
+    allBooks: (root, args) =>
       books.filter(b => bookMatches(args, b))
   },
   Author: {
@@ -135,10 +140,8 @@ const resolvers = {
   },
 
   Mutation: {
-
-    
     addBook: (root, args) => {
-      if (!books.find(b => b.author === args.author)) {   
+      if (!books.find(b => b.author === args.author)) {
         const author = {
           name: args.author,
           id: uuid()
@@ -148,8 +151,17 @@ const resolvers = {
       const book = { ...args, id: uuid() }
       books = books.concat(book)
       return book
+    },
+    editAuthor: (root, args) => {
+      const author = authors.find(a => a.name === args.name)
+      if(!author) {
+        return null
+      }
+      const updatedAuthor = { ...author, born: args.setBornTo }
+      authors = authors.map(a => a.name === args.name ? updatedAuthor : a)
+      return updatedAuthor
+    }
   }
-}
 }
 
 
