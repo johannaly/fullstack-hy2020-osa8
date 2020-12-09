@@ -5,7 +5,13 @@ const Books = (props) => {
     return null
   }
 
-  const books = []
+  let books = []
+  if (props.books === undefined) {
+    books = []
+    return null
+} else {
+    books = props.books.allBooks
+ 
 
   return (
     <div>
@@ -33,6 +39,7 @@ const Books = (props) => {
       </table>
     </div>
   )
+}
 }
 
 export default Books
