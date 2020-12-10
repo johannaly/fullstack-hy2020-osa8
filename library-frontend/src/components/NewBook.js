@@ -36,6 +36,7 @@ const NewBook = (props) => {
        variables: { title, author, publishedInt, genres }
     })
     
+    
     setTitle('')
     setPublished('')
     setAuhtor('')
